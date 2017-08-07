@@ -13,8 +13,8 @@ Note: You need to be logged in as admin. Default user password is 'pivotal'
 
 Examples:
   pcfadmin create-user-org mborges
-  pcfadmin delete-org mborges-org
-  pcfadmin seed-org-users mborges-org 5
+  pcfadmin delete-user-org mborges
+  pcfadmin create-org-users mborges-org 5
     where: 5 is the number of users
   pcfadmin delete-org-users mborges-org
     note: only 'user-*' users are deleted
@@ -61,7 +61,7 @@ create_space() {
 
 
 ################
-seed_org_users() {
+create_org_users() {
   local orgName=$1
   local numUsers=$2
 
@@ -104,6 +104,8 @@ delete_org_users() {
         fi
       fi
     done
+
+  cf org-users $orgName -a
 }
 
 ################
@@ -124,14 +126,14 @@ if [ "create-user-org" = "$CMD" ]; then
   do
     create_space $orgName $spaceName $userName
   done
-elif [ "delete-org" = "$CMD" ]; then
+elif [ "delete-user-org" = "$CMD" ]; then
   userName=$2
   orgName="$userName-org"
-  destroy_org orgName userName
-elif [ "seed-org-users" = "$CMD" ]; then
+  destroy_org $orgName $userName
+elif [ "create-org-users" = "$CMD" ]; then
   orgName=$2
   users=$3
-  seed_org_users $orgName $users
+  create_org_users $orgName $users
 elif [ "delete-org-users" = "$CMD" ]; then
   orgName=$2
   delete_org_users $orgName
